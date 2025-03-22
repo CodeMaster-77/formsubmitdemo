@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRUSTEDVIN | Home</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <span>TRUSTED</span>
+                    <span>VIN</span>
+                </div>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" >Home</a>
+                <a href="services.html">Services</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="about.html">About</a>
+                <a href="why-choose-us.html" >Why Choose Us</a>
+                <a href="contactus.html" class="cta-button">Contact Us</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contact Form Section -->
+    <section class="contact-form-section">
+        <div class="contact-leftblock">
+            <p class="subheading">Contact Us</p>
+            <h1>We’re <span>here</span> for you</h1>
+        </div>
+
+        <div id="contact-form-container" class="contact-form-container">
+            <form id="contact-form" action="https://formsubmit.co/iambilal059@gmail.com" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first-name">First name *</label>
+                        <input type="text" id="first-name" name="first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last name *</label>
+                        <input type="text" id="last-name" name="last-name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Work email *</label>
+                    <input type="email" id="email" name="email" required pattern="[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+">
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country or region *</label>
+                    <select id="country" name="country" required>
+                        <option value="">Please select...</option>
+                        <option value="us">United States</option>
+                        <option value="uk">United Kingdom</option>
+                        <option value="ca">Canada</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Write your message here *</label>
+                    <textarea id="message" name="message" placeholder="How are you looking to use Notion?" required></textarea>
+                </div>
+
+                <p class="form-note">
+                    By submitting this form, I acknowledge receipt of the
+                    <a href="#">Notion Privacy Policy</a>.
+                </p>
+
+                <p class="form-note">Fields marked with an asterisk (*) are required.</p>
+
+                <button type="submit" class="submit-button">Submit</button>
+
+                <p id="form-status" class="form-status"></p>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById("contact-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+    
+            const firstName = document.getElementById("first-name").value.trim();
+            const lastName = document.getElementById("last-name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const country = document.getElementById("country").value.trim();
+            const message = document.getElementById("message").value.trim();
+            const submitButton = document.querySelector(".submit-button");
+            const formStatus = document.getElementById("form-status");
+    
+            if (!firstName || !lastName || !email || !country || !message) {
+                formStatus.textContent = "Please fill in all required fields.";
+                formStatus.style.color = "red";
+                return;
+            }
+    
+            submitButton.disabled = true;
+            formStatus.textContent = "Sending...";
+            formStatus.style.color = "blue";
+    
+            fetch("http://localhost:5000/send-email", {  // Make sure your backend is running
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ firstName, lastName, email, country, message }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    formStatus.textContent = "Email sent successfully!";
+                    formStatus.style.color = "green";
+                    document.getElementById("contact-form").reset();
+                } else {
+                    formStatus.textContent = "Failed to send email. Please try again.";
+                    formStatus.style.color = "red";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                formStatus.textContent = "Something went wrong!";
+                formStatus.style.color = "red";
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+            });
+        });
+    </script>
+    
+</body>
+</html>
